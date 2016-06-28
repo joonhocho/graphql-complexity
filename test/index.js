@@ -2,6 +2,7 @@ import {
   graphql,
   GraphQLSchema,
   GraphQLInt,
+  GraphQLList,
   GraphQLString,
   GraphQLObjectType,
 } from 'graphql';
@@ -14,19 +15,21 @@ const UserType = new GraphQLObjectType({
   fields: () => ({
     id: {
       type: GraphQLInt,
-      expense: 1,
+      cost: 1,
     },
     name: {
       type: GraphQLString,
-      expense: 2,
+      cost: 2,
     },
     friends: {
-      type: UserType,
-      expense: 10,
+      type: new GraphQLList(UserType),
       args: {
         limit: {
           type: GraphQLInt,
         },
+      },
+      cost: (_, {limit}) => {
+        return limit || 20;
       },
     },
   }),
@@ -62,7 +65,7 @@ const schema = new GraphQLSchema({
 
 const runQuery = (query) =>
   graphql(schema, query)
-    .then((res) => res.data.input);
+    .then((res) => res);
 
 
 describe('GraphQLProtection', () => {
